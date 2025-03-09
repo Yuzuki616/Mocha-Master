@@ -1,0 +1,7 @@
+{
+  "LogLevel": "Debug",
+  "DbPath": "test_data/data.db",
+  "Addr": ":8080",
+  "AccessToken": "testaccesstoken",
+  "PullToken": "testpulltoken"
+}

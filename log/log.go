@@ -8,12 +8,25 @@ import (
 var logger *zap.Logger
 
 func init() {
+	logger = newMainLogger(zapcore.InfoLevel)
+}
+
+func newMainLogger(level zapcore.Level) *zap.Logger {
+	if logger != nil {
+		logger.Sync()
+	}
 	c := zap.NewProductionConfig()
 	c.EncoderConfig.TimeKey = "time"
 	c.EncoderConfig.CallerKey = ""
 	c.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	logger, _ = c.Build()
+	c.Level = zap.NewAtomicLevelAt(level)
 	logger = logger.Named("Main")
+	return logger
+}
+
+func SetLevel(level zapcore.Level) {
+	logger = newMainLogger(level)
 }
 
 func SubLogger(name string) *zap.Logger {

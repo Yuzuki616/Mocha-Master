@@ -25,7 +25,7 @@ func NewRouter(h *handle.Handle, m *middleware.Middleware) *Router {
 }
 
 func (r *Router) Start(addr string) error {
-	err := loadRoute()
+	err := r.loadRoute()
 	if err != nil {
 		return fmt.Errorf("load route err: %v", err)
 	}
