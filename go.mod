@@ -1,4 +1,4 @@
-module Mocha-Master
+module github.com/Yuzuki616/Mocha-Master
 
 go 1.23
 

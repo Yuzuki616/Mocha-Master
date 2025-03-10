@@ -1,8 +1,8 @@
 package handle
 
 import (
-	"Mocha-Master/data"
-	"Mocha-Master/log"
+	"github.com/Yuzuki616/Mocha-Master/data"
+	"github.com/Yuzuki616/Mocha-Master/log"
 	"go.uber.org/zap"
 )
 

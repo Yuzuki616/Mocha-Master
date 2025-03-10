@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"Mocha-Master/conf"
-	"Mocha-Master/log"
+	"github.com/Yuzuki616/Mocha-Master/conf"
+	"github.com/Yuzuki616/Mocha-Master/log"
 	"go.uber.org/zap"
 )
 

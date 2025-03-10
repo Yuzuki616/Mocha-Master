@@ -1,14 +1,14 @@
 package main
 
 import (
-	"Mocha-Master/conf"
-	"Mocha-Master/data"
-	"Mocha-Master/handle"
-	"Mocha-Master/log"
-	"Mocha-Master/middleware"
-	"Mocha-Master/router"
 	"flag"
 	"fmt"
+	"github.com/Yuzuki616/Mocha-Master/conf"
+	"github.com/Yuzuki616/Mocha-Master/data"
+	"github.com/Yuzuki616/Mocha-Master/handle"
+	"github.com/Yuzuki616/Mocha-Master/log"
+	"github.com/Yuzuki616/Mocha-Master/middleware"
+	"github.com/Yuzuki616/Mocha-Master/router"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"

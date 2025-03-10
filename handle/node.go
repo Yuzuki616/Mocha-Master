@@ -1,7 +1,7 @@
 package handle
 
 import (
-	"Mocha-Master/data"
+	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/gin-gonic/gin"
 )
 

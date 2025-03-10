@@ -1,9 +1,9 @@
 package router
 
 import (
-	"Mocha-Master/handle"
-	"Mocha-Master/middleware"
 	"fmt"
+	"github.com/Yuzuki616/Mocha-Master/handle"
+	"github.com/Yuzuki616/Mocha-Master/middleware"
 	"github.com/gin-gonic/gin"
 )
 
