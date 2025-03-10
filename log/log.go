@@ -3,6 +3,7 @@ package log
 import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"strings"
 )
 
 var logger *zap.Logger
@@ -25,8 +26,19 @@ func newMainLogger(level zapcore.Level) *zap.Logger {
 	return logger
 }
 
-func SetLevel(level zapcore.Level) {
-	logger = newMainLogger(level)
+func SetLevel(level string) {
+	switch strings.ToLower(level) {
+	case "debug":
+		logger = newMainLogger(zap.DebugLevel)
+	case "info":
+		logger = newMainLogger(zap.InfoLevel)
+	case "warn":
+		logger = newMainLogger(zap.WarnLevel)
+	case "error":
+		logger = newMainLogger(zap.ErrorLevel)
+	case "panic":
+		logger = newMainLogger(zap.PanicLevel)
+	}
 }
 
 func SubLogger(name string) *zap.Logger {

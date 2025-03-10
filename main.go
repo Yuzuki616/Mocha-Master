@@ -29,18 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Load config failed.", zap.Error(err))
 	}
-	switch c.LogLevel {
-	case "debug":
-		log.SetLevel(zap.DebugLevel)
-	case "info":
-		log.SetLevel(zap.InfoLevel)
-	case "warn":
-		log.SetLevel(zap.WarnLevel)
-	case "error":
-		log.SetLevel(zap.ErrorLevel)
-	case "panic":
-		log.SetLevel(zap.PanicLevel)
-	}
+	log.SetLevel(c.LogLevel)
 	d, err := data.New(c.DbPath)
 	if err != nil {
 		log.Fatal("Open db failed.", zap.Error(err))
