@@ -13,7 +13,8 @@ type Handle struct {
 }
 
 type Handlers struct {
-	Node NodeHandler
+	Rule   ServerHandler
+	Server ServerHandler
 }
 
 func NewHandle(d *data.Data) *Handle {
@@ -22,7 +23,10 @@ func NewHandle(d *data.Data) *Handle {
 		d:      d,
 	}
 	h.Handlers = &Handlers{
-		Node: NodeHandler{
+		Rule: ServerHandler{
+			Handle: h,
+		},
+		Server: ServerHandler{
 			Handle: h,
 		},
 	}

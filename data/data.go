@@ -7,8 +7,9 @@ import (
 )
 
 type Data struct {
-	e    *xorm.Engine
-	Node NodeFunc
+	e      *xorm.Engine
+	Rule   NodeFunc
+	Server ServerFunc
 }
 
 func New(path string) (*Data, error) {
@@ -16,13 +17,16 @@ func New(path string) (*Data, error) {
 	if err != nil {
 		return nil, fmt.Errorf("init xorm engine error: %v", err)
 	}
-	err = e.Sync(new(Node))
+	err = e.Sync(new(Rule))
 	if err != nil {
 		return nil, fmt.Errorf("sync tables error: %v", err)
 	}
 	return &Data{
 		e: e,
-		Node: NodeFunc{
+		Rule: NodeFunc{
+			Engine: e,
+		},
+		Server: ServerFunc{
 			Engine: e,
 		},
 	}, nil

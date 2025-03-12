@@ -5,22 +5,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type NodeHandler struct {
+type ServerHandler struct {
 	Handle
 }
 
-type NodeRequest struct {
-	Name       string                 `json:"name"`
-	ListenIP   string                 `json:"listen_ip"`
-	ListenPort int                    `json:"listen_port"`
-	TargetType string                 `json:"target_type"`
-	TargetIP   string                 `json:"target_ip"`
-	TargetPort int                    `json:"target_port"`
-	Ext        map[string]interface{} `json:"ext"`
+type ServerRequest struct {
+	Name string                 `json:"name"`
+	Ext  map[string]interface{} `json:"ext"`
 }
 
-func (h *NodeHandler) Create(c *gin.Context) {
-	var req NodeRequest
+func (h *ServerHandler) Create(c *gin.Context) {
+	var req ServerRequest
 	err := c.BindJSON(&req)
 	if err != nil {
 		c.JSON(200, CommonResponse{
@@ -30,84 +25,11 @@ func (h *NodeHandler) Create(c *gin.Context) {
 		})
 		return
 	}
-	nd := &data.Node{
-		Name:       req.Name,
-		ListenIP:   req.ListenIP,
-		ListenPort: req.ListenPort,
-		TargetType: req.TargetType,
-		TargetIP:   req.TargetIP,
-		TargetPort: req.TargetPort,
-		Ext:        req.Ext,
-	}
-	err = h.d.Node.Create(nd)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
-	c.JSON(200, CommonResponse{
-		Code: 200,
-		Msg:  "success",
-	})
-}
-
-func (h *NodeHandler) Update(c *gin.Context) {
-	var req NodeRequest
-	err := c.BindJSON(&req)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 400,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
-	nd := &data.Node{
-		Name:       req.Name,
-		ListenIP:   req.ListenIP,
-		ListenPort: req.ListenPort,
-		TargetType: req.TargetType,
-		TargetIP:   req.TargetIP,
-		TargetPort: req.TargetPort,
-		Ext:        req.Ext,
-	}
-	err = h.d.Node.Update(nd)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
-	c.JSON(200, CommonResponse{
-		Code: 200,
-		Msg:  "success",
-	})
-}
-
-type DeleteNodeRequest struct {
-	Name string `json:"name"`
-}
-
-func (h *NodeHandler) Delete(c *gin.Context) {
-	var req DeleteNodeRequest
-	err := c.BindJSON(&req)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 400,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
-	nd := &data.Node{
+	nd := &data.Server{
 		Name: req.Name,
+		Ext:  req.Ext,
 	}
-	err = h.d.Node.Delete(nd)
+	err = h.d.Server.Create(nd)
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,
@@ -122,12 +44,8 @@ func (h *NodeHandler) Delete(c *gin.Context) {
 	})
 }
 
-type GetNodeRequest struct {
-	Name string `json:"name"`
-}
-
-func (h *NodeHandler) Get(c *gin.Context) {
-	var req GetNodeRequest
+func (h *ServerHandler) Update(c *gin.Context) {
+	var req ServerRequest
 	err := c.BindJSON(&req)
 	if err != nil {
 		c.JSON(200, CommonResponse{
@@ -137,10 +55,77 @@ func (h *NodeHandler) Get(c *gin.Context) {
 		})
 		return
 	}
-	nd := &data.Node{
+	nd := &data.Server{
 		Name: req.Name,
+		Ext:  req.Ext,
 	}
-	err = h.d.Node.Get(nd)
+	err = h.d.Server.Update(nd)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	c.JSON(200, CommonResponse{
+		Code: 200,
+		Msg:  "success",
+	})
+}
+
+type DeleteServerRequest struct {
+	Id int64 `json:"id"`
+}
+
+func (h *ServerHandler) Delete(c *gin.Context) {
+	var req DeleteServerRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	nd := &data.Server{
+		Id: req.Id,
+	}
+	err = h.d.Server.Delete(nd)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	c.JSON(200, CommonResponse{
+		Code: 200,
+		Msg:  "success",
+	})
+}
+
+type GetServerRequest struct {
+	Id int64 `json:"id"`
+}
+
+func (h *ServerHandler) Get(c *gin.Context) {
+	var req GetServerRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	nd := &data.Server{
+		Id: req.Id,
+	}
+	err = h.d.Server.Get(nd)
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,
@@ -156,8 +141,8 @@ func (h *NodeHandler) Get(c *gin.Context) {
 	})
 }
 
-func (h *NodeHandler) List(c *gin.Context) {
-	nodes, err := h.d.Node.List()
+func (h *ServerHandler) List(c *gin.Context) {
+	nodes, err := h.d.Server.List()
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,

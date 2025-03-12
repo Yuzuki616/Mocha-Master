@@ -3,7 +3,7 @@ package data
 import "testing"
 
 func TestNodeFunc_Create(t *testing.T) {
-	nd := &Node{
+	nd := &Rule{
 		Name:       "test",
 		ListenIP:   "::",
 		ListenPort: 8080,
@@ -11,7 +11,7 @@ func TestNodeFunc_Create(t *testing.T) {
 		TargetIP:   "1.1.1.1",
 		TargetPort: 80,
 	}
-	err := d.Node.Create(nd)
+	err := d.Rule.Create(nd)
 	if err != nil {
 		t.Error(err)
 	}
