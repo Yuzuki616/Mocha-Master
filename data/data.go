@@ -17,7 +17,7 @@ func New(path string) (*Data, error) {
 	if err != nil {
 		return nil, fmt.Errorf("init xorm engine error: %v", err)
 	}
-	err = e.Sync(new(Rule))
+	err = e.Sync(new(Rule), new(Server))
 	if err != nil {
 		return nil, fmt.Errorf("sync tables error: %v", err)
 	}

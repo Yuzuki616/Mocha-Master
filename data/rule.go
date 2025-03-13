@@ -14,7 +14,7 @@ type Rule struct {
 	TargetIP   string
 	TargetPort int
 	Ext        map[string]interface{}
-	ServerId   int64     `xorm:"index"`
+	ServerId   int64     `xorm:"index notnull"`
 	CreatedAt  time.Time `xorm:"created"`
 	UpdatedAt  time.Time `xorm:"updated"`
 }
