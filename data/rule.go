@@ -2,6 +2,7 @@ package data
 
 import (
 	"time"
+	"xorm.io/builder"
 	"xorm.io/xorm"
 )
 
@@ -11,8 +12,8 @@ type Rule struct {
 	ListenIP   string
 	ListenPort int
 	TargetType string
-	TargetIP   string
-	TargetPort int
+	TargetIP   []string
+	TargetPort []int
 	Ext        map[string]interface{}
 	ServerId   int64     `xorm:"index notnull"`
 	CreatedAt  time.Time `xorm:"created"`
@@ -55,9 +56,16 @@ func (n *NodeFunc) Get(nd *Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) List() ([]Rule, error) {
+func (n *NodeFunc) List(serverId int64) ([]Rule, error) {
 	var nodes []Rule
-	err := n.Engine.Find(&nodes)
+	if serverId == 0 {
+		err := n.Engine.Find(&nodes)
+		if err != nil {
+			return nil, err
+		}
+		return nodes, nil
+	}
+	err := n.Engine.Where(builder.Eq{"server_id": serverId}).Find(&nodes)
 	if err != nil {
 		return nil, err
 	}

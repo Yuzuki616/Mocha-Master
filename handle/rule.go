@@ -14,8 +14,8 @@ type CreateRuleRequest struct {
 	ListenIP   string                 `json:"listen_ip" validate:"required"`
 	ListenPort int                    `json:"listen_port" validate:"required"`
 	TargetType string                 `json:"target_type" validate:"required"`
-	TargetIP   string                 `json:"target_ip" validate:"required"`
-	TargetPort int                    `json:"target_port" validate:"required"`
+	TargetIP   []string               `json:"target_ip" validate:"required"`
+	TargetPort []int                  `json:"target_port" validate:"required"`
 	Ext        map[string]interface{} `json:"ext"`
 }
 
@@ -78,8 +78,8 @@ type UpdateRuleRequest struct {
 	ListenIP   string                 `json:"listen_ip"`
 	ListenPort int                    `json:"listen_port"`
 	TargetType string                 `json:"target_type"`
-	TargetIP   string                 `json:"target_ip"`
-	TargetPort int                    `json:"target_port"`
+	TargetIP   []string               `json:"target_ip"`
+	TargetPort []int                  `json:"target_port"`
 	Ext        map[string]interface{} `json:"ext"`
 }
 
@@ -186,7 +186,17 @@ type ListRuleRequest struct {
 }
 
 func (h *RuleHandler) List(c *gin.Context) {
-	nodes, err := h.d.Rule.List()
+	var req ListRuleRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(400, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	nodes, err := h.d.Rule.List(req.ServerId)
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,

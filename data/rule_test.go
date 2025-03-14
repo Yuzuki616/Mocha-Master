@@ -4,13 +4,13 @@ import "testing"
 
 func TestNodeFunc_Create(t *testing.T) {
 	nd := &Rule{
-		Name:       "test",
+		Name:       "test2",
 		ListenIP:   "::",
 		ListenPort: 8080,
 		TargetType: "tcp",
-		TargetIP:   "1.1.1.1",
+		TargetIP:   []string{"1.1.1.1"},
 		ServerId:   1,
-		TargetPort: 80,
+		TargetPort: []int{80, 90},
 	}
 	ok, err := d.Server.IsExist(&Server{Id: 1})
 	if err != nil {
