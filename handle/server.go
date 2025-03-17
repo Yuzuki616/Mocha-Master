@@ -108,7 +108,13 @@ func (h *ServerHandler) Delete(c *gin.Context) {
 }
 
 type GetServerRequest struct {
-	Id int64 `json:"id"`
+	Id          int64 `json:"id"`
+	ContainRule bool  `json:"contain_rule"`
+}
+
+type GetServerResponseData struct {
+	Server *data.Server `json:"server"`
+	Rules  []data.Rule  `json:"rules"`
 }
 
 func (h *ServerHandler) Get(c *gin.Context) {
@@ -134,10 +140,26 @@ func (h *ServerHandler) Get(c *gin.Context) {
 		})
 		return
 	}
+	var rules []data.Rule
+	if req.ContainRule {
+		rules, err = h.d.Rule.List(req.Id)
+		if err != nil {
+			c.JSON(200, CommonResponse{
+				Code: 500,
+				Msg:  err.Error(),
+				Data: nil,
+			})
+			return
+		}
+		return
+	}
 	c.JSON(200, CommonResponse{
 		Code: 200,
 		Msg:  "success",
-		Data: nd,
+		Data: &GetServerResponseData{
+			Server: nd,
+			Rules:  rules,
+		},
 	})
 }
 

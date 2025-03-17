@@ -13,5 +13,6 @@ func (r *Router) loadRoute() error {
 	// Server
 	sn := r.e.Group("/api/v1/server", r.m.ServerAuth)
 	sn.Handle("POST", "/rule/list", r.h.Rule.List)
+	sn.Handle("POST", "/get", r.h.Server.Get)
 	return nil
 }
