@@ -3,9 +3,11 @@ package data
 import "xorm.io/xorm"
 
 type Server struct {
-	Id   int64  `xorm:"pk autoincr"`
-	Name string `xorm:"varchar(255) notnull unique"`
-	Ext  map[string]interface{}
+	Id        int64    `xorm:"pk autoincr"`
+	Name      string   `xorm:"varchar(255) notnull unique"`
+	Ip        []string `xorm:"varchar(255) notnull unique"`
+	PortRange [2]int   `xorm:"varchar(255) notnull unique"`
+	Ext       map[string]interface{}
 }
 
 type ServerFunc struct {

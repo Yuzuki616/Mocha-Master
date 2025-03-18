@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"fmt"
 	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +14,6 @@ type CreateRuleRequest struct {
 	Name       string                 `json:"name" validate:"required"`
 	ListenIP   string                 `json:"listen_ip" validate:"required"`
 	ListenPort int                    `json:"listen_port" validate:"required"`
-	TargetType string                 `json:"target_type" validate:"required"`
 	TargetIP   []string               `json:"target_ip" validate:"required"`
 	TargetPort []int                  `json:"target_port" validate:"required"`
 	Ext        map[string]interface{} `json:"ext"`
@@ -52,7 +52,6 @@ func (h *RuleHandler) Create(c *gin.Context) {
 		Name:       req.Name,
 		ListenIP:   req.ListenIP,
 		ListenPort: req.ListenPort,
-		TargetType: req.TargetType,
 		TargetIP:   req.TargetIP,
 		TargetPort: req.TargetPort,
 		Ext:        req.Ext,
@@ -196,7 +195,7 @@ func (h *RuleHandler) List(c *gin.Context) {
 		})
 		return
 	}
-	nodes, err := h.d.Rule.List(req.ServerId)
+	nodes, err := h.d.Rule.List(req.ServerId, "")
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,
@@ -209,5 +208,220 @@ func (h *RuleHandler) List(c *gin.Context) {
 		Code: 200,
 		Msg:  "success",
 		Data: nodes,
+	})
+}
+
+type CreateTunRuleRequest struct {
+	ServerId       int64                  `json:"server_id" validate:"required"`
+	Name           string                 `json:"name" validate:"required"`
+	ListenIP       string                 `json:"listen_ip" validate:"required"`
+	ListenPort     int                    `json:"listen_port" validate:"required"`
+	TargetListenIp string                 `json:"target_listen_ip" validate:"required"`
+	TargetId       int64                  `json:"target_id" validate:"required"`
+	TargetPort     []int                  `json:"target_port" validate:"required"`
+	OutIp          []string               `json:"out_ip" validate:"required"`
+	OutPort        []int                  `json:"out_port" validate:"required"`
+	Ext            map[string]interface{} `json:"ext"`
+}
+
+func (h *RuleHandler) CreateTun(c *gin.Context) {
+	var req CreateTunRuleRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	ok, err := h.d.Server.IsExist(&data.Server{Id: req.ServerId})
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	if !ok {
+		c.JSON(400, CommonResponse{
+			Code: 400,
+			Msg:  "server not exist",
+			Data: nil,
+		})
+		return
+	}
+	// Get target server
+	ts := &data.Server{Id: req.TargetId}
+	err = h.d.Server.Get(ts)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	targetTag := fmt.Sprintf(
+		"%s-%d-%d",
+		ts.Name,
+		ts.Id,
+		req.TargetPort[0])
+
+	// Create out rule
+	nd2 := &data.Rule{
+		ServerId:   req.TargetId,
+		Name:       req.Name,
+		ListenIP:   req.TargetListenIp,
+		ListenPort: req.TargetPort[0],
+		TargetIP:   req.OutIp,
+		TargetPort: req.OutPort,
+		TargetType: data.TunOutType,
+		Ext:        req.Ext,
+	}
+	err = h.d.Rule.Create(nd2)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	// Create in rule
+	nd := &data.Rule{
+		ServerId:   req.ServerId,
+		Name:       req.Name,
+		ListenIP:   req.ListenIP,
+		ListenPort: req.ListenPort,
+		TargetIP:   ts.Ip,
+		TargetPort: req.TargetPort,
+		TargetType: data.TunInType,
+		TargetTag:  targetTag,
+		TargetRule: nd2.Id,
+		Ext:        req.Ext,
+	}
+	err = h.d.Rule.Create(nd)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(200, CommonResponse{
+		Code: 200,
+		Msg:  "success",
+	})
+}
+
+type UpdateTunRuleRequest struct {
+	Id             int64                  `json:"id" validate:"required"`
+	Name           string                 `json:"name" validate:"required"`
+	ListenIP       string                 `json:"listen_ip" validate:"required"`
+	ListenPort     int                    `json:"listen_port" validate:"required"`
+	TargetRule     int64                  `json:"target_id" validate:"required"`
+	TargetListenIp string                 `json:"target_listen_ip" validate:"required"`
+	TargetPort     []int                  `json:"target_port" validate:"required"`
+	OutIp          []string               `json:"out_ip" validate:"required"`
+	OutPort        []int                  `json:"out_port" validate:"required"`
+	Ext            map[string]interface{} `json:"ext"`
+}
+
+func (h *RuleHandler) UpdateTun(c *gin.Context) {
+	var req UpdateTunRuleRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	nd := &data.Rule{
+		Id:         req.Id,
+		Name:       req.Name,
+		ListenIP:   req.ListenIP,
+		ListenPort: req.ListenPort,
+		TargetPort: req.TargetPort,
+		Ext:        req.Ext,
+	}
+	err = h.d.Rule.Update(nd)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	nd2 := &data.Rule{
+		Id:         req.TargetRule,
+		TargetType: data.TunOutType,
+		Name:       req.Name,
+		ListenIP:   req.TargetListenIp,
+		ListenPort: req.TargetPort[0],
+		TargetIP:   req.OutIp,
+		TargetPort: req.OutPort,
+		Ext:        req.Ext,
+	}
+	err = h.d.Rule.Update(nd2)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	c.JSON(200, CommonResponse{
+		Code: 200,
+		Msg:  "success",
+	})
+}
+
+type DeleteTunRuleRequest struct {
+	Id         int64 `json:"id" validate:"required"`
+	TargetRule int64 `json:"target_rule" validate:"required"`
+}
+
+func (h *RuleHandler) DeleteTun(c *gin.Context) {
+	var req DeleteTunRuleRequest
+	err := c.BindJSON(&req)
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 400,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+	err = h.d.Rule.Delete(
+		&data.Rule{
+			Id: req.Id,
+		},
+		&data.Rule{
+			Id: req.TargetRule,
+		})
+	if err != nil {
+		c.JSON(200, CommonResponse{
+			Code: 500,
+			Msg:  err.Error(),
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(200, CommonResponse{
+		Code: 200,
+		Msg:  "success",
 	})
 }

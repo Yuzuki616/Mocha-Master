@@ -6,6 +6,11 @@ import (
 	"xorm.io/xorm"
 )
 
+const (
+	TunOutType = "tun_out"
+	TunInType  = "tun_in"
+)
+
 type Rule struct {
 	Id         int64  `xorm:"pk autoincr"`
 	Name       string `xorm:"varchar(255) notnull unique"`
@@ -14,6 +19,8 @@ type Rule struct {
 	TargetType string
 	TargetIP   []string
 	TargetPort []int
+	TargetRule int64
+	TargetTag  string
 	Ext        map[string]interface{}
 	ServerId   int64     `xorm:"index notnull"`
 	CreatedAt  time.Time `xorm:"created"`
@@ -24,7 +31,7 @@ type NodeFunc struct {
 	*xorm.Engine
 }
 
-func (n *NodeFunc) Create(nd *Rule) error {
+func (n *NodeFunc) Create(nd ...*Rule) error {
 	_, err := n.Engine.Insert(nd)
 	if err != nil {
 		return err
@@ -40,7 +47,7 @@ func (n *NodeFunc) Update(nd *Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) Delete(nd *Rule) error {
+func (n *NodeFunc) Delete(nd ...*Rule) error {
 	_, err := n.Engine.Delete(nd)
 	if err != nil {
 		return err
@@ -56,7 +63,7 @@ func (n *NodeFunc) Get(nd *Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) List(serverId int64) ([]Rule, error) {
+func (n *NodeFunc) List(serverId int64, targetType string) ([]Rule, error) {
 	var nodes []Rule
 	if serverId == 0 {
 		err := n.Engine.Find(&nodes)
@@ -65,7 +72,11 @@ func (n *NodeFunc) List(serverId int64) ([]Rule, error) {
 		}
 		return nodes, nil
 	}
-	err := n.Engine.Where(builder.Eq{"server_id": serverId}).Find(&nodes)
+	err := n.Engine.Where(
+		builder.Eq{
+			"server_id":   serverId,
+			"target_type": targetType,
+		}).Find(&nodes)
 	if err != nil {
 		return nil, err
 	}
