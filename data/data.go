@@ -8,7 +8,7 @@ import (
 
 type Data struct {
 	e      *xorm.Engine
-	Rule   NodeFunc
+	Rule   RuleFunc
 	Server ServerFunc
 }
 
@@ -23,7 +23,7 @@ func New(path string) (*Data, error) {
 	}
 	return &Data{
 		e: e,
-		Rule: NodeFunc{
+		Rule: RuleFunc{
 			Engine: e,
 		},
 		Server: ServerFunc{

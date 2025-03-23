@@ -142,7 +142,7 @@ func (h *ServerHandler) Get(c *gin.Context) {
 	}
 	var rules []data.Rule
 	if req.ContainRule {
-		rules, err = h.d.Rule.List(req.Id)
+		rules, err = h.d.Rule.List(req.Id, "")
 		if err != nil {
 			c.JSON(200, CommonResponse{
 				Code: 500,

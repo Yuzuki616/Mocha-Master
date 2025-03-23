@@ -277,20 +277,8 @@ func (h *RuleHandler) CreateTun(c *gin.Context) {
 		ListenIP:   req.TargetListenIp,
 		ListenPort: req.TargetPort[0],
 		TargetIP:   req.OutIp,
-		TargetPort: req.OutPort,
-		TargetType: data.TunOutType,
 		Ext:        req.Ext,
 	}
-	err = h.d.Rule.Create(nd2)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
-
 	// Create in rule
 	nd := &data.Rule{
 		ServerId:   req.ServerId,
@@ -299,20 +287,11 @@ func (h *RuleHandler) CreateTun(c *gin.Context) {
 		ListenPort: req.ListenPort,
 		TargetIP:   ts.Ip,
 		TargetPort: req.TargetPort,
-		TargetType: data.TunInType,
 		TargetTag:  targetTag,
-		TargetRule: nd2.Id,
 		Ext:        req.Ext,
 	}
-	err = h.d.Rule.Create(nd)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
+
+	err = h.d.Rule.CreateTun(nd, nd2)
 
 	c.JSON(200, CommonResponse{
 		Code: 200,
@@ -353,15 +332,6 @@ func (h *RuleHandler) UpdateTun(c *gin.Context) {
 		TargetPort: req.TargetPort,
 		Ext:        req.Ext,
 	}
-	err = h.d.Rule.Update(nd)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
 
 	nd2 := &data.Rule{
 		Id:         req.TargetRule,
@@ -373,7 +343,7 @@ func (h *RuleHandler) UpdateTun(c *gin.Context) {
 		TargetPort: req.OutPort,
 		Ext:        req.Ext,
 	}
-	err = h.d.Rule.Update(nd2)
+	err = h.d.Rule.UpdateTun(nd, nd2)
 	if err != nil {
 		c.JSON(200, CommonResponse{
 			Code: 500,

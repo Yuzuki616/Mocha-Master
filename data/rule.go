@@ -27,11 +27,11 @@ type Rule struct {
 	UpdatedAt  time.Time `xorm:"updated"`
 }
 
-type NodeFunc struct {
+type RuleFunc struct {
 	*xorm.Engine
 }
 
-func (n *NodeFunc) Create(nd ...*Rule) error {
+func (n *RuleFunc) Create(nd ...*Rule) error {
 	_, err := n.Engine.Insert(nd)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (n *NodeFunc) Create(nd ...*Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) Update(nd *Rule) error {
+func (n *RuleFunc) Update(nd *Rule) error {
 	_, err := n.Engine.Update(nd)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func (n *NodeFunc) Update(nd *Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) Delete(nd ...*Rule) error {
+func (n *RuleFunc) Delete(nd ...*Rule) error {
 	_, err := n.Engine.Delete(nd)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (n *NodeFunc) Delete(nd ...*Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) Get(nd *Rule) error {
+func (n *RuleFunc) Get(nd *Rule) error {
 	_, err := n.Engine.Get(nd)
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (n *NodeFunc) Get(nd *Rule) error {
 	return nil
 }
 
-func (n *NodeFunc) List(serverId int64, targetType string) ([]Rule, error) {
+func (n *RuleFunc) List(serverId int64, targetType string) ([]Rule, error) {
 	var nodes []Rule
 	if serverId == 0 {
 		err := n.Engine.Find(&nodes)
@@ -83,6 +83,6 @@ func (n *NodeFunc) List(serverId int64, targetType string) ([]Rule, error) {
 	return nodes, nil
 }
 
-func (n *NodeFunc) IsExist(nd *Rule) (bool, error) {
+func (n *RuleFunc) IsExist(nd *Rule) (bool, error) {
 	return n.Engine.Exist(nd)
 }
