@@ -15,6 +15,7 @@ type Handle struct {
 type Handlers struct {
 	Rule   ServerHandler
 	Server ServerHandler
+	User   *UserHandler
 }
 
 func NewHandle(d *data.Data) *Handle {
@@ -28,6 +29,9 @@ func NewHandle(d *data.Data) *Handle {
 		},
 		Server: ServerHandler{
 			Handle: h,
+		},
+		User: &UserHandler{
+			Handle: &h,
 		},
 	}
 	return &h
