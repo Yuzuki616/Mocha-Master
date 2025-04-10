@@ -16,7 +16,7 @@ type Grpc struct {
 }
 
 func (g *Grpc) ListenAndGetRules(request *Request, rsp grpc.ServerStreamingServer[Response]) error {
-	ns, err := g.d.Rule.List(request.Id)
+	ns, err := g.d.Rule.List(request.Id, "")
 	if err != nil {
 		return err
 	}
