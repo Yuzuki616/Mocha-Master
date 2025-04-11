@@ -7,7 +7,11 @@ import (
 )
 
 type Data struct {
-	e      *xorm.Engine
+	e *xorm.Engine
+	Func
+}
+
+type Func struct {
 	Rule   RuleFunc
 	Server ServerFunc
 }
@@ -21,13 +25,14 @@ func New(path string) (*Data, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sync tables error: %v", err)
 	}
-	return &Data{
-		e: e,
+	d := &Data{}
+	d.Func = Func{
 		Rule: RuleFunc{
-			Engine: e,
+			d: d,
 		},
 		Server: ServerFunc{
-			Engine: e,
+			d: d,
 		},
-	}, nil
+	}
+	return d, nil
 }

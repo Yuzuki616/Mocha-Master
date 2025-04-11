@@ -1,7 +1,6 @@
 package handle
 
 import (
-	"fmt"
 	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/gin-gonic/gin"
 )
@@ -218,7 +217,6 @@ type CreateTunRuleRequest struct {
 	ListenPort     int                    `json:"listen_port" validate:"required"`
 	TargetListenIp string                 `json:"target_listen_ip" validate:"required"`
 	TargetId       int64                  `json:"target_id" validate:"required"`
-	TargetPort     []int                  `json:"target_port" validate:"required"`
 	OutIp          []string               `json:"out_ip" validate:"required"`
 	OutPort        []int                  `json:"out_port" validate:"required"`
 	Ext            map[string]interface{} `json:"ext"`
@@ -252,46 +250,18 @@ func (h *RuleHandler) CreateTun(c *gin.Context) {
 		})
 		return
 	}
-	// Get target server
-	ts := &data.Server{Id: req.TargetId}
-	err = h.d.Server.Get(ts)
-	if err != nil {
-		c.JSON(200, CommonResponse{
-			Code: 500,
-			Msg:  err.Error(),
-			Data: nil,
-		})
-		return
-	}
 
-	targetTag := fmt.Sprintf(
-		"%s-%d-%d",
-		ts.Name,
-		ts.Id,
-		req.TargetPort[0])
-
-	// Create out rule
-	nd2 := &data.Rule{
-		ServerId:   req.TargetId,
-		Name:       req.Name,
-		ListenIP:   req.TargetListenIp,
-		ListenPort: req.TargetPort[0],
-		TargetIP:   req.OutIp,
-		Ext:        req.Ext,
-	}
-	// Create in rule
-	nd := &data.Rule{
-		ServerId:   req.ServerId,
-		Name:       req.Name,
-		ListenIP:   req.ListenIP,
-		ListenPort: req.ListenPort,
-		TargetIP:   ts.Ip,
-		TargetPort: req.TargetPort,
-		TargetTag:  targetTag,
-		Ext:        req.Ext,
-	}
-
-	err = h.d.Rule.CreateTun(nd, nd2)
+	err = h.d.Rule.CreateTun(&data.CreateTunParams{
+		ServerId:       req.ServerId,
+		Name:           req.Name,
+		ListenIP:       req.ListenIP,
+		ListenPort:     req.ListenPort,
+		TargetListenIp: req.TargetListenIp,
+		TargetId:       req.TargetId,
+		OutIp:          req.OutIp,
+		OutPort:        req.OutPort,
+		Ext:            req.Ext,
+	})
 
 	c.JSON(200, CommonResponse{
 		Code: 200,

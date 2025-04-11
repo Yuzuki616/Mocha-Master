@@ -3,7 +3,6 @@ package data
 import (
 	"time"
 	"xorm.io/builder"
-	"xorm.io/xorm"
 )
 
 const (
@@ -28,11 +27,11 @@ type Rule struct {
 }
 
 type RuleFunc struct {
-	*xorm.Engine
+	d *Data
 }
 
 func (n *RuleFunc) Create(nd ...*Rule) error {
-	_, err := n.Engine.Insert(nd)
+	_, err := n.d.e.Insert(nd)
 	if err != nil {
 		return err
 	}
@@ -40,7 +39,7 @@ func (n *RuleFunc) Create(nd ...*Rule) error {
 }
 
 func (n *RuleFunc) Update(nd *Rule) error {
-	_, err := n.Engine.Update(nd)
+	_, err := n.d.e.Update(nd)
 	if err != nil {
 		return err
 	}
@@ -48,7 +47,7 @@ func (n *RuleFunc) Update(nd *Rule) error {
 }
 
 func (n *RuleFunc) Delete(nd ...*Rule) error {
-	_, err := n.Engine.Delete(nd)
+	_, err := n.d.e.Delete(nd)
 	if err != nil {
 		return err
 	}
@@ -56,7 +55,7 @@ func (n *RuleFunc) Delete(nd ...*Rule) error {
 }
 
 func (n *RuleFunc) Get(nd *Rule) error {
-	_, err := n.Engine.Get(nd)
+	_, err := n.d.e.Get(nd)
 	if err != nil {
 		return err
 	}
@@ -66,13 +65,13 @@ func (n *RuleFunc) Get(nd *Rule) error {
 func (n *RuleFunc) List(serverId int64, targetType string) ([]Rule, error) {
 	var nodes []Rule
 	if serverId == 0 {
-		err := n.Engine.Find(&nodes)
+		err := n.d.e.Find(&nodes)
 		if err != nil {
 			return nil, err
 		}
 		return nodes, nil
 	}
-	err := n.Engine.Where(
+	err := n.d.e.Where(
 		builder.Eq{
 			"server_id":   serverId,
 			"target_type": targetType,
@@ -84,5 +83,5 @@ func (n *RuleFunc) List(serverId int64, targetType string) ([]Rule, error) {
 }
 
 func (n *RuleFunc) IsExist(nd *Rule) (bool, error) {
-	return n.Engine.Exist(nd)
+	return n.d.e.Exist(nd)
 }

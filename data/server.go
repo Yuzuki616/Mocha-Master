@@ -1,7 +1,5 @@
 package data
 
-import "xorm.io/xorm"
-
 type Server struct {
 	Id        int64    `xorm:"pk autoincr"`
 	Name      string   `xorm:"varchar(255) notnull unique"`
@@ -11,11 +9,11 @@ type Server struct {
 }
 
 type ServerFunc struct {
-	*xorm.Engine
+	d *Data
 }
 
 func (s *ServerFunc) Create(nd *Server) error {
-	_, err := s.Engine.Insert(nd)
+	_, err := s.d.e.Insert(nd)
 	if err != nil {
 		return err
 	}
@@ -23,7 +21,7 @@ func (s *ServerFunc) Create(nd *Server) error {
 }
 
 func (s *ServerFunc) Update(nd *Server) error {
-	_, err := s.Engine.Update(nd)
+	_, err := s.d.e.Update(nd)
 	if err != nil {
 		return err
 	}
@@ -31,7 +29,7 @@ func (s *ServerFunc) Update(nd *Server) error {
 }
 
 func (s *ServerFunc) Delete(nd *Server) error {
-	_, err := s.Engine.Delete(nd)
+	_, err := s.d.e.Delete(nd)
 	if err != nil {
 		return err
 	}
@@ -39,7 +37,7 @@ func (s *ServerFunc) Delete(nd *Server) error {
 }
 
 func (s *ServerFunc) Get(nd *Server) error {
-	_, err := s.Engine.Get(nd)
+	_, err := s.d.e.Get(nd)
 	if err != nil {
 		return err
 	}
@@ -48,7 +46,7 @@ func (s *ServerFunc) Get(nd *Server) error {
 
 func (s *ServerFunc) List() ([]Server, error) {
 	var servers []Server
-	err := s.Engine.Find(&servers)
+	err := s.d.e.Find(&servers)
 	if err != nil {
 		return nil, err
 	}
@@ -56,5 +54,5 @@ func (s *ServerFunc) List() ([]Server, error) {
 }
 
 func (s *ServerFunc) IsExist(sv *Server) (bool, error) {
-	return s.Engine.Exist(sv)
+	return s.d.e.Exist(sv)
 }
