@@ -1,7 +1,6 @@
 package grpc
 
 import (
-	"github.com/Yuzuki616/Mocha-Master/common/slices"
 	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/goccy/go-json"
 	"github.com/orcaman/concurrent-map/v2"
@@ -22,21 +21,17 @@ func (g *Grpc) ListenAndGetRules(request *Request, rsp grpc.ServerStreamingServe
 	}
 	rules := make([]*Rule, 0, len(ns))
 	for _, n := range ns {
-		b, err := json.Marshal(n.Ext)
+		b, err := json.Marshal(n.Config)
 		if err != nil {
 			return err
 		}
 		rules = append(rules, &Rule{
 			ServerId:   n.ServerId,
 			Name:       n.Name,
-			ListenIP:   n.ListenIP,
 			ListenPort: int64(n.ListenPort),
 			TargetType: n.TargetType,
-			TargetIP:   n.TargetIP,
-			TargetPort: slices.TypeTo(n.TargetPort, func(t int) int64 {
-				return int64(t)
-			}),
-			Ext: b,
+			TargetIP:   n.TargetAddr,
+			Ext:        b,
 		})
 	}
 	err = rsp.Send(&Response{Rules: rules})

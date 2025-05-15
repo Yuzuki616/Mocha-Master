@@ -115,9 +115,9 @@ type Rule struct {
 	ListenIP      string                 `protobuf:"bytes,2,opt,name=ListenIP,proto3" json:"ListenIP,omitempty"`
 	ListenPort    int64                  `protobuf:"varint,3,opt,name=ListenPort,proto3" json:"ListenPort,omitempty"`
 	TargetType    string                 `protobuf:"bytes,4,opt,name=TargetType,proto3" json:"TargetType,omitempty"`
-	TargetIP      []string               `protobuf:"bytes,5,rep,name=TargetIP,proto3" json:"TargetIP,omitempty"`
+	TargetIP      []string               `protobuf:"bytes,5,rep,name=TargetAddr,proto3" json:"TargetAddr,omitempty"`
 	TargetPort    []int64                `protobuf:"varint,6,rep,packed,name=TargetPort,proto3" json:"TargetPort,omitempty"`
-	Ext           []byte                 `protobuf:"bytes,7,opt,name=Ext,proto3" json:"Ext,omitempty"`
+	Ext           []byte                 `protobuf:"bytes,7,opt,name=Config,proto3" json:"Config,omitempty"`
 	ServerId      int64                  `protobuf:"varint,8,opt,name=ServerId,proto3" json:"ServerId,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -148,7 +148,7 @@ func (x *Rule) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Rule.ProtoReflect.Descriptor instead.
+// Deprecated: Use AdminAuth.ProtoReflect.Descriptor instead.
 func (*Rule) Descriptor() ([]byte, []int) {
 	return file_grpc_server_proto_rawDescGZIP(), []int{2}
 }
@@ -255,10 +255,10 @@ var file_grpc_server_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_grpc_server_proto_goTypes = []any{
 	(*Request)(nil),  // 0: Request
 	(*Response)(nil), // 1: Response
-	(*Rule)(nil),     // 2: Rule
+	(*Rule)(nil),     // 2: AdminAuth
 }
 var file_grpc_server_proto_depIdxs = []int32{
-	2, // 0: Response.Rules:type_name -> Rule
+	2, // 0: Response.Rules:type_name -> AdminAuth
 	0, // 1: Server.ListenAndGetRules:input_type -> Request
 	1, // 2: Server.ListenAndGetRules:output_type -> Response
 	2, // [2:3] is the sub-list for method output_type

@@ -9,10 +9,14 @@ import (
 	"github.com/Yuzuki616/Mocha-Master/log"
 	"github.com/Yuzuki616/Mocha-Master/middleware"
 	"github.com/Yuzuki616/Mocha-Master/router"
+	"github.com/dgraph-io/ristretto"
 	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"runtime"
+
+	"github.com/eko/gocache/lib/v4/cache"
+	ristretto_store "github.com/eko/gocache/store/ristretto/v4"
 	"syscall"
 )
 
@@ -30,12 +34,22 @@ func main() {
 		log.Fatal("Load config failed.", zap.Error(err))
 	}
 	log.SetLevel(c.LogLevel)
+	ristrettoCache, err := ristretto.NewCache(&ristretto.Config{
+		NumCounters: 1000,
+		MaxCost:     100,
+		BufferItems: 64,
+	})
+	if err != nil {
+		log.Fatal("Init ristretto cache failed.", zap.Error(err))
+	}
+	ristrettoStore := ristretto_store.NewRistretto(ristrettoCache)
+	cache := cache.New[any](ristrettoStore)
 	d, err := data.New(c.DbPath)
 	if err != nil {
 		log.Fatal("Open db failed.", zap.Error(err))
 	}
 	m := middleware.New(c)
-	h := handle.NewHandle(d)
+	h := handle.NewHandle(d, cache, c)
 	r := router.NewRouter(h, m)
 	go func() {
 		err = r.Start(c.Addr)
@@ -44,7 +58,6 @@ func main() {
 		}
 	}()
 	log.Info("Mocha-Master started.")
-
 	runtime.GC()
 	osc := make(chan os.Signal, 1)
 	signal.Notify(osc, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)

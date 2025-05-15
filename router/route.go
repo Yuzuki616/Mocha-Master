@@ -1,19 +1,14 @@
 package router
 
 func (r *Router) loadRoute() error {
-	// User
-	user := r.e.Group("/api/v1/user", r.m.UserAuth)
-	user.Handle("GET", "tokenCheck", r.h.User.TokenCheck)
-	un := user.Group("/server")
-	un.Handle("GET", "/list", r.h.Server.List)
-	un.Handle("POST", "/create", r.h.Server.Create)
-	un.Handle("POST", "/update", r.h.Server.Update)
-	un.Handle("POST", "/delete", r.h.Server.Delete)
-	un.Handle("POST", "/get", r.h.Server.Get)
-
+	// Guest
+	guest := r.e.Group("/api/v1/guest")
+	r.h.InitGuestRoute(guest)
+	// Admin
+	admin := r.e.Group("/api/v1/user", r.m.AdminAuth)
+	r.h.InitAdminRoute(admin)
 	// Server
 	sn := r.e.Group("/api/v1/server", r.m.ServerAuth)
-	sn.Handle("POST", "/rule/list", r.h.Rule.List)
-	sn.Handle("POST", "/get", r.h.Server.Get)
+	r.h.InitServerRoute(sn)
 	return nil
 }

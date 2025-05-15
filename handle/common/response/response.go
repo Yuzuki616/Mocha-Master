@@ -1,4 +1,4 @@
-package handle
+package response
 
 type CommonResponse struct {
 	Code int         `json:"code"`
