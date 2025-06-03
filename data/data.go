@@ -25,7 +25,9 @@ func New(path string) (*Data, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sync tables error: %v", err)
 	}
-	d := &Data{}
+	d := &Data{
+		e: e,
+	}
 	d.Func = Func{
 		Rule: RuleFunc{
 			d: d,

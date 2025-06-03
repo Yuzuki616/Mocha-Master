@@ -1,7 +1,6 @@
 package data
 
 import (
-	"github.com/goccy/go-json"
 	"time"
 	"xorm.io/builder"
 )
@@ -12,18 +11,17 @@ const (
 )
 
 type Rule struct {
-	Id         int64  `xorm:"pk autoincr"`
-	Name       string `xorm:"varchar(255) notnull unique"`
-	ListenAddr string `xorm:"varchar(255) notnull"`
-	ListenPort int
-	TargetType string
-	TargetAddr []string
-	TargetRule int64
-	TargetTag  string
-	Config     json.RawMessage `xorm:"json"`
-	ServerId   int64           `xorm:"index notnull"`
-	CreatedAt  time.Time       `xorm:"created"`
-	UpdatedAt  time.Time       `xorm:"updated"`
+	Id         int64     `xorm:"pk autoincr" json:"id"`
+	Name       string    `xorm:"varchar(255) notnull unique" json:"name"`
+	ListenAddr string    `xorm:"varchar(255) notnull" json:"listen_addr"`
+	TargetType string    `xorm:"varchar(255)" json:"target_type"`
+	TargetAddr []string  `xorm:"json" json:"target_addr"`
+	TargetRule int64     `xorm:"index" json:"target_rule"`
+	TargetTag  string    `xorm:"varchar(255)" json:"target_tag"`
+	Config     string    `json:"config"`
+	ServerId   int64     `xorm:"index notnull" json:"server_id"`
+	CreatedAt  time.Time `xorm:"created" json:"created_at"`
+	UpdatedAt  time.Time `xorm:"updated" json:"updated_at"`
 }
 
 type RuleFunc struct {
@@ -39,7 +37,7 @@ func (r *RuleFunc) Create(nd ...*Rule) error {
 }
 
 func (r *RuleFunc) Update(nd *Rule) error {
-	_, err := r.d.e.Update(nd)
+	_, err := r.d.e.ID(nd.Id).Update(nd)
 	if err != nil {
 		return err
 	}
@@ -47,9 +45,18 @@ func (r *RuleFunc) Update(nd *Rule) error {
 }
 
 func (r *RuleFunc) Delete(nd ...*Rule) error {
-	_, err := r.d.e.Delete(nd)
-	if err != nil {
-		return err
+	for _, n := range nd {
+		if n.Id == 0 {
+			_, err := r.d.e.Delete(n)
+			if err != nil {
+				return err
+			}
+		} else {
+			_, err := r.d.e.ID(n.Id).Delete(n)
+			if err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

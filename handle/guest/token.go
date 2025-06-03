@@ -14,11 +14,22 @@ type TokenRequest struct {
 	Token string `json:"token"`
 }
 
+// TokenCheck validates access token
+// @Summary Check token
+// @Description Validate access token for authentication
+// @Tags authentication
+// @Accept json
+// @Produce json
+// @Param request body TokenRequest true "Token validation request"
+// @Success 200 {object} response.CommonResponse
+// @Failure 400 {object} response.CommonResponse
+// @Failure 403 {object} response.CommonResponse
+// @Router /tokenCheck [post]
 func (h *Handler) TokenCheck(c *gin.Context) {
 	var req TokenRequest
 	err := c.BindJSON(&req)
 	if err != nil {
-		c.JSON(200, &response.CommonResponse{
+		c.JSON(400, &response.CommonResponse{
 			Code: 400,
 			Msg:  err.Error(),
 		})

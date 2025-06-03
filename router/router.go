@@ -2,6 +2,7 @@ package router
 
 import (
 	"fmt"
+	_ "github.com/Yuzuki616/Mocha-Master/docs" // swagger docs
 	"github.com/Yuzuki616/Mocha-Master/handle"
 	"github.com/Yuzuki616/Mocha-Master/middleware"
 	"github.com/gin-contrib/cors"
@@ -19,10 +20,10 @@ func NewRouter(h *handle.Handle, m *middleware.Middleware) *Router {
 	engine := gin.New()
 	engine.Use(m.Logger, gin.Recovery())
 	engine.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-		},
-		AllowMethods:     []string{"GET", "POST"},
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length", "Content-Type"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowCredentials: true,
 	}))
 	return &Router{

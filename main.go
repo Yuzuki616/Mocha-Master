@@ -1,3 +1,23 @@
+// Package main Mocha-Master API
+//
+//	@title			Mocha-Master API
+//	@version		0.0.1
+//	@description	A relay and tunnel panel API for managing traffic forwarding rules and server configurations
+//	@termsOfService	http://swagger.io/terms/
+//
+//	@contact.name	Yuzuki616
+//	@contact.url	https://github.com/Yuzuki616
+//
+//	@license.name	MIT
+//	@license.url	https://opensource.org/licenses/MIT
+//
+//	@host		localhost:8080
+//	@BasePath	/
+//
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Access token for admin endpoints
 package main
 
 import (

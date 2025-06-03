@@ -1,12 +1,10 @@
 package data
 
-import "github.com/goccy/go-json"
-
 type Server struct {
-	Id        int64           `xorm:"pk autoincr"`
-	Name      string          `xorm:"varchar(255) notnull unique"`
-	PortRange [2]int          `xorm:"varchar(255) notnull unique"`
-	Config    json.RawMessage `xorm:"json"`
+	Id        int64  `xorm:"pk autoincr" json:"id"`
+	Name      string `xorm:"varchar(255) notnull" json:"name"`
+	PortRange [2]int `xorm:"notnull" json:"port_range"`
+	Config    string `json:"config"`
 }
 
 type ServerFunc struct {
@@ -22,7 +20,7 @@ func (s *ServerFunc) Create(nd *Server) error {
 }
 
 func (s *ServerFunc) Update(nd *Server) error {
-	_, err := s.d.e.Update(nd)
+	_, err := s.d.e.ID(nd.Id).Update(nd)
 	if err != nil {
 		return err
 	}
@@ -31,6 +29,10 @@ func (s *ServerFunc) Update(nd *Server) error {
 
 func (s *ServerFunc) Delete(nd *Server) error {
 	_, err := s.d.e.Delete(nd)
+	if err != nil {
+		return err
+	}
+	err = s.d.Rule.Delete(&Rule{ServerId: nd.Id})
 	if err != nil {
 		return err
 	}

@@ -112,7 +112,7 @@ func (x *Response) GetRules() []*Rule {
 type Rule struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
-	ListenIP      string                 `protobuf:"bytes,2,opt,name=ListenIP,proto3" json:"ListenIP,omitempty"`
+	ListenIP      string                 `protobuf:"bytes,2,opt,name=ListenAddr,proto3" json:"ListenAddr,omitempty"`
 	ListenPort    int64                  `protobuf:"varint,3,opt,name=ListenPort,proto3" json:"ListenPort,omitempty"`
 	TargetType    string                 `protobuf:"bytes,4,opt,name=TargetType,proto3" json:"TargetType,omitempty"`
 	TargetIP      []string               `protobuf:"bytes,5,rep,name=TargetAddr,proto3" json:"TargetAddr,omitempty"`
