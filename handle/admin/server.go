@@ -44,9 +44,10 @@ func (h *Handler) CreateServerHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -96,9 +97,10 @@ func (h *Handler) UpdateServerHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -141,9 +143,10 @@ func (h *Handler) DeleteServerHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -193,9 +196,10 @@ func (h *Handler) GetServerHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	var rules []data.Rule
@@ -204,9 +208,10 @@ func (h *Handler) GetServerHandle(c *gin.Context) {
 		if err != nil {
 			c.JSON(500, response.CommonResponse{
 				Code: 500,
-				Msg:  err.Error(),
+				Msg:  "internal server error",
 				Data: nil,
 			})
+			c.Error(err)
 			return
 		}
 		return
@@ -240,9 +245,10 @@ func (h *Handler) ListServerHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	ss := make([]ListServerResponse, 0, len(nodes))

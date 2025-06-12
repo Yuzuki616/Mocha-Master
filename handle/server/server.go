@@ -52,9 +52,10 @@ func (h *Handler) GetConfigHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	server := &data.Server{Id: req.ServerId}
@@ -62,9 +63,10 @@ func (h *Handler) GetConfigHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -113,9 +115,10 @@ func (h *Handler) ReportStatusHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{

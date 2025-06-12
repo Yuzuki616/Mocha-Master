@@ -23,6 +23,15 @@ func (m *Middleware) Logger(c *gin.Context) {
 	if latency > time.Minute {
 		latency = latency - latency%time.Second
 	}
+	if err := c.Err(); err != nil {
+		m.logger.Error("Request Handling Error.",
+			zap.String("Method", c.Request.Method),
+			zap.Int("Status", c.Writer.Status()),
+			zap.String("Source", c.ClientIP()),
+			zap.String("Path", path),
+			zap.Error(err))
+		return
+	}
 	if raw != "" {
 		path = path + "?" + raw
 	}

@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"fmt"
 	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/Yuzuki616/Mocha-Master/handle/common/response"
 	"github.com/gin-gonic/gin"
@@ -42,9 +41,10 @@ func (h *Handler) CreateRuleHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	if !ok {
@@ -66,9 +66,10 @@ func (h *Handler) CreateRuleHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -123,9 +124,10 @@ func (h *Handler) UpdateRuleHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -168,9 +170,10 @@ func (h *Handler) DeleteRuleHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  fmt.Errorf("delete rule error: %w", err).Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -197,9 +200,10 @@ func (h *Handler) DeleteRuleByServerIdHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
@@ -239,9 +243,10 @@ func (h *Handler) ListRuleHandle(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
-			Msg:  err.Error(),
+			Msg:  "internal server error",
 			Data: nil,
 		})
+		c.Error(err)
 		return
 	}
 	c.JSON(200, response.CommonResponse{
