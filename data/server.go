@@ -1,10 +1,9 @@
 package data
 
 type Server struct {
-	Id        int64  `xorm:"pk autoincr" json:"id"`
-	Name      string `xorm:"varchar(255) notnull" json:"name"`
-	PortRange [2]int `xorm:"notnull" json:"port_range"`
-	Config    string `json:"config"`
+	Id     int64  `xorm:"pk autoincr" json:"id"`
+	Name   string `xorm:"varchar(255) notnull" json:"name"`
+	Config string `json:"config"`
 }
 
 type ServerFunc struct {

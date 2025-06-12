@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"github.com/Yuzuki616/Mocha-Master/data"
 	"github.com/Yuzuki616/Mocha-Master/handle/common/response"
 	"github.com/gin-gonic/gin"
@@ -37,24 +38,6 @@ func (h *Handler) CreateRuleHandle(c *gin.Context) {
 		})
 		return
 	}
-	ok, err := h.Data.Server.IsExist(&data.Server{Id: req.ServerId})
-	if err != nil {
-		c.JSON(500, response.CommonResponse{
-			Code: 500,
-			Msg:  "internal server error",
-			Data: nil,
-		})
-		c.Error(err)
-		return
-	}
-	if !ok {
-		c.JSON(400, response.CommonResponse{
-			Code: 400,
-			Msg:  "server not exist",
-			Data: nil,
-		})
-		return
-	}
 	nd := &data.Rule{
 		ServerId:   req.ServerId,
 		Name:       req.Name,
@@ -64,6 +47,13 @@ func (h *Handler) CreateRuleHandle(c *gin.Context) {
 	}
 	err = h.Data.Rule.Create(nd)
 	if err != nil {
+		if errors.Is(err, data.ErrServerNotExist) {
+			c.JSON(400, response.CommonResponse{
+				Code: 400,
+				Msg:  "server not exist",
+				Data: nil,
+			})
+		}
 		c.JSON(500, response.CommonResponse{
 			Code: 500,
 			Msg:  "internal server error",
@@ -84,7 +74,7 @@ type UpdateRuleRequest struct {
 	Name       string   `json:"name"`
 	ListenAddr string   `json:"listen_addr"`
 	TargetType string   `json:"target_type"`
-	TargetAddr []string `json:"target_ip"`
+	TargetAddr []string `json:"target_addr"`
 	Config     string   `json:"config"`
 }
 

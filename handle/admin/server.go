@@ -9,8 +9,9 @@ import (
 )
 
 type ServerRequest struct {
-	Name   string `json:"name" validate:"required"`
-	Config string `json:"config" validate:"required json"`
+	Name      string `json:"name" validate:"required"`
+	PortRange [2]int `json:"port_range" validate:"required"`
+	Config    string `json:"config" validate:"required json"`
 }
 
 // CreateServerHandle creates a new server
@@ -57,10 +58,9 @@ func (h *Handler) CreateServerHandle(c *gin.Context) {
 }
 
 type UpdateServerRequest struct {
-	Id        int64  `json:"id" validate:"required"`
-	Name      string `json:"name" validate:"required"`
-	PortRange [2]int `json:"port_range" validate:"required"`
-	Config    string `json:"config" validate:"required json"`
+	Id     int64  `json:"id" validate:"required"`
+	Name   string `json:"name" validate:"required"`
+	Config string `json:"config" validate:"required json"`
 }
 
 // UpdateServerHandle updates an existing server
@@ -87,10 +87,9 @@ func (h *Handler) UpdateServerHandle(c *gin.Context) {
 		return
 	}
 	nd := &data.Server{
-		Id:        req.Id,
-		Name:      req.Name,
-		PortRange: req.PortRange,
-		Config:    req.Config,
+		Id:     req.Id,
+		Name:   req.Name,
+		Config: req.Config,
 	}
 	println(req.Id)
 	err = h.Data.Server.Update(nd)

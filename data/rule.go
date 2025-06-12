@@ -1,6 +1,7 @@
 package data
 
 import (
+	"errors"
 	"time"
 	"xorm.io/builder"
 )
@@ -28,7 +29,21 @@ type RuleFunc struct {
 	d *Data
 }
 
+var ErrServerNotExist = errors.New("server not exist")
+
 func (r *RuleFunc) Create(nd ...*Rule) error {
+	for _, n := range nd {
+		if n.ServerId == 0 {
+			return ErrServerNotExist
+		}
+		ok, err := r.d.Server.IsExist(&Server{Id: n.ServerId})
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return ErrServerNotExist
+		}
+	}
 	_, err := r.d.e.Insert(nd)
 	if err != nil {
 		return err
